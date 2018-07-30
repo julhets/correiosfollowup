@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <julioreis_correiosfollowup>
+            <general>
+                <enabled>0</enabled>
+            </general>
+
+            <!-- CATALOG PRODUCTS -->
+            <cron_catalog_product>
+                <enabled>1</enabled>
+                <queue_create>*/13 * * * *</queue_create>
+                <queue_create_limit>500</queue_create_limit>
+                <queue_execute>*/30 * * * *</queue_execute>
+                <queue_execute_limit>500</queue_execute_limit>
+            </cron_catalog_product>
+        </julioreis_correiosfollowup>
+    </default>
+</config>
