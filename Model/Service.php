@@ -1,5 +1,4 @@
 <?php
-
 /**
  * JulioReis_CorreiosFollowup
  *
@@ -34,7 +33,7 @@ class Service extends AbstractModel
         $content = curl_exec($ch);
         curl_close($ch);
 
-        $dom = new DOMDocument;
+        $dom = new \DOMDocument;
         $dom->loadHTML($content);
 
         $listDates = $this->getElementsByClassName($dom, 'sroDtEvent');
@@ -56,7 +55,7 @@ class Service extends AbstractModel
 
     private function getElementsByClassName($dom, $className)
     {
-        $finder = new DomXPath($dom);
+        $finder = new \DomXPath($dom);
         return $finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $className ')]");
     }
 

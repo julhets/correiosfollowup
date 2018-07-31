@@ -2,4 +2,11 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- *********************************************************************************************************** -->
+    <!-- PLUGINS DECLARATIONS                                                                                        -->
+    <!-- *********************************************************************************************************** -->
+    <!--<type name="Magento\Sales\Api\Data\OrderInterface">-->
+        <!--<plugin name="skyhub_information" type="BitTools\SkyHub\Plugin\Sales\Order"/>-->
+    <!--</type>-->
+
 </config>

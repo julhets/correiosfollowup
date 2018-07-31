@@ -5,16 +5,8 @@
         <julioreis_correiosfollowup>
             <general>
                 <enabled>0</enabled>
+                <cron_execute>*/30 * * * *</cron_execute>
             </general>
-
-            <!-- CATALOG PRODUCTS -->
-            <cron_catalog_product>
-                <enabled>1</enabled>
-                <queue_create>*/13 * * * *</queue_create>
-                <queue_create_limit>500</queue_create_limit>
-                <queue_execute>*/30 * * * *</queue_execute>
-                <queue_execute_limit>500</queue_execute_limit>
-            </cron_catalog_product>
         </julioreis_correiosfollowup>
     </default>
 </config>

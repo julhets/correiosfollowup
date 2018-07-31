@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="julioreis" translate="label" sortOrder="10">
-            <label>Bit Tools</label>
+            <label>Julio Reis</label>
         </tab>
         <section id="julioreis_correiosfollowup" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1"
                  showInStore="1">
@@ -21,7 +21,7 @@
                 </field>
                 <field id="cron_execute" translate="label comment" type="text" sortOrder="40" showInDefault="1"
                        showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Products Queue Execute Expression</label>
+                    <label>Tracker Execute Expression</label>
                     <comment>Note that this must be a cron expression format.</comment>
                     <depends>
                         <field id="enabled">1</field>
