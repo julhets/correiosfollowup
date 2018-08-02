@@ -37,7 +37,7 @@
                 </field>
                 <field id="delivered_order_status" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
                     <label>Delivered Order Status</label>
-                    <source_model>BitTools\SkyHub\Model\Config\Source\Integration\Order\Status\CompleteOrders</source_model>
+                    <source_model>JulioReis\CorreiosFollowup\Model\Config\Source\Integration\Order\Status\CompleteOrders</source_model>
                     <comment>When the order has the DELIVERED status type in Correios, Magento will put the order in this status.</comment>
                     <depends>
                         <field id="enabled">1</field>
