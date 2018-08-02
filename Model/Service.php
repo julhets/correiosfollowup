@@ -34,7 +34,7 @@ class Service extends AbstractModel
         curl_close($ch);
 
         $dom = new \DOMDocument;
-        $dom->loadHTML($content);
+        @$dom->loadHTML($content);
 
         $listDates = $this->getElementsByClassName($dom, 'sroDtEvent');
 
