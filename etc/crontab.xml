@@ -4,7 +4,7 @@
     <group id="default">
         <!-- TRACKER -->
         <job name="julioreis_correiosfollowup_tracker" instance="JulioReis\CorreiosFollowup\Cron\Tracker" method="execute">
-            <schedule>*/45 * * * *</schedule>
+            <config_path>julioreis_correiosfollowup/general/cron_execute</config_path>
         </job>
     </group>
 </config>
