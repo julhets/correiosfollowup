@@ -42,6 +42,7 @@ class AddShipmentToQueue implements \Magento\Framework\Event\ObserverInterface
         /** get the tracking and save in queue */
         $trackId = $track->getId();
         $queue = $this->queueFactory->create();
+        $queue->setCorreiosStatus(\JulioReis\CorreiosFollowup\Model\Tracking\Queue::CORREIOS_STATUS_PROCESSING);
         $queue->setShipmentTrackId($trackId);
         $this->queueRepository->save($queue);
         /** end */

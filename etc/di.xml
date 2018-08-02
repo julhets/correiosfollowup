@@ -3,10 +3,20 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- *********************************************************************************************************** -->
-    <!-- PLUGINS DECLARATIONS                                                                                        -->
+    <!-- TYPES DECLARATIONS                                                                                        -->
     <!-- *********************************************************************************************************** -->
-    <!--<type name="Magento\Sales\Api\Data\OrderInterface">-->
-        <!--<plugin name="skyhub_information" type="BitTools\SkyHub\Plugin\Sales\Order"/>-->
-    <!--</type>-->
+    <type name="JulioReis\CorreiosFollowup\Model\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="JulioReis\CorreiosFollowup\Model\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">Correios Followup Logger</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">JulioReis\CorreiosFollowup\Model\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>

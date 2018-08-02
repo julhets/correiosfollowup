@@ -8,7 +8,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
+use JulioReis\CorreiosFollowup\Model\Logger\Logger;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use JulioReis\CorreiosFollowup\Model\Service as CorreiosService;
 
@@ -45,7 +45,7 @@ class Context implements \Magento\Framework\ObjectManager\ContextInterface
         ModuleConfig $moduleConfig,
         StoreManagerInterface $storeManager,
         ManagerInterface $eventManager,
-        LoggerInterface $logger,
+        Logger $logger,
         ObjectManagerInterface $objectManager,
         State $state,
         Registry $registry,

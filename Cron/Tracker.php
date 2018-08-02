@@ -15,6 +15,7 @@
 
 namespace JulioReis\CorreiosFollowup\Cron;
 
+use Braintree\Exception;
 use JulioReis\CorreiosFollowup\Model\Context as ModuleContext;
 use Magento\Cron\Model\Schedule;
 
@@ -58,50 +59,71 @@ class Tracker
      */
     public function execute(Schedule $schedule)
     {
+        if(!$this->context->moduleConfig()->getModuleConfig('enabled')) {
+            return;
+        }
+
         /** 1. iterate queue registers (registers from x days ago to now, and correios_status is not delivered) */
         $collection = $this->queueRepository->getPendingTracks();
         foreach ($collection as $queue) {
-            $shipmentTrackId = $queue->getShipmentTrackId();
-            $shipmentTrack = $this->trackRepository->get($shipmentTrackId);
-            $trackNumber = $shipmentTrack->getTrackNumber();
+            try {
+                $shipmentTrackId = $queue->getShipmentTrackId();
+                $shipmentTrack = $this->trackRepository->get($shipmentTrackId);
+                $trackNumber = $shipmentTrack->getTrackNumber();
 
-            /** 2. search each register at the correios service */
-            $trackingStatuses = $this->context->correiosService()->getTrackingStatuses($trackNumber);
-            $liveStatusesQty = count($trackingStatuses);
+                /** 2. search each register at the correios service */
+                $trackingStatuses = $this->context->correiosService()->getTrackingStatuses($trackNumber);
+                $liveStatusesQty = count($trackingStatuses);
 
-            /** 3. if has any track update: (if not, do nothing) */
-            if ($queue->getStatusesQty() == $liveStatusesQty) {
-                continue;
+                /** 3. if has any track update: (if not, do nothing) */
+                if ($queue->getStatusesQty() >= $liveStatusesQty) {
+                    continue;
+                }
+
+                /** 4. update queue register (update correios_status, statuses_qty, updated_at) */
+                $statusesToUpdateQty = $liveStatusesQty - $queue->getStatusesQty();
+                $statusesToUpdate = array_slice($trackingStatuses, 0, $statusesToUpdateQty);
+
+                $auxCount = 0;
+                foreach ($statusesToUpdate as $statusToUpdate) {
+                    /** 5. put the new status on delivery comment */
+                    $shipment = $this->shipmentRepository->get($shipmentTrack->getParentId());
+                    $shipment->addComment("Novo Status Correios: {$statusToUpdate[1]}", $auxCount == 0 ? true : false, true);
+                    $auxCount++;
+                }
+                $this->shipmentRepository->save($shipment);
+
+                krsort($statusesToUpdate);
+
+                $lastStatusToUpdate = end($statusesToUpdate);
+                $lastCorreiosStatusFlag = $this->trackingQueueHelper->getCorreiosStatus($lastStatusToUpdate[1]);
+                $queue->setCorreiosStatus($lastCorreiosStatusFlag);
+                $queue->setStatusesQty($liveStatusesQty);
+                $this->queueRepository->save($queue);
+
+                /** 6. update sales_order status (possibly to delivered_to_customer if the order is delivered) */
+                if ($lastCorreiosStatusFlag == \JulioReis\CorreiosFollowup\Model\Tracking\Queue::CORREIOS_STATUS_DELIVERED) {
+                    $this->processDeliveredOrderState($shipmentTrack->getOrderId());
+                }
+            } catch (Exception $ex) {
+                $this->context->logger()->error($ex->getMessage());
             }
-
-            /** 4. update queue register (update correios_status, statuses_qty, updated_at) */
-            $trackingStatusToUpdate = array_shift($trackingStatuses);
-            $queue->setCorreiosStatus($this->trackingQueueHelper->getCorreiosStatus($trackingStatusToUpdate[1]));
-            $queue->setStatusesQty($liveStatusesQty);
-            $this->queueRepository->save($queue);
-
-            /** @todo 5. update sales_order status (possibly to delivered_to_customer if the order is delivered) */
-            $this->processDeliveredOrderState($shipmentTrack->getOrderId());
-
-            /** @todo 6. send email to customer, informing the new track status */
-
-            /** 7. put the new status on delivery comment */
-            $shipment = $this->shipmentRepository->get($shipmentTrack->getParentId());
-            $shipment->addComment("Novo Status Correios: {$trackingStatusToUpdate[1]}", false, true);
-            $this->shipmentRepository->save($shipment);
         }
     }
 
     protected function processDeliveredOrderState($orderId)
     {
-        $status = 'customer_delivered';
+        if (!$this->context->moduleConfig()->getModuleConfig('change_status')) {
+            return;
+        }
+
+        if (!$status = $this->context->moduleConfig()->getModuleConfig('delivered_order_status')) {
+            return;
+        }
 
         $order = $this->orderRepository->get($orderId);
         $order
-            ->setState(\Magento\Sales\Model\Order::STATE_COMPLETE)
-            ->setStatus($status)
-            ->setData('is_updated', true)
-            ->addStatusHistoryComment('Order delivered.', true);
+            ->addStatusHistoryComment('Order delivered.', $status);
 
         $this->orderRepository->save($order);
     }
