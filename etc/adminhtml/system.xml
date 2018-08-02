@@ -31,11 +31,25 @@
                        showInStore="0" canRestore="1">
                     <label>Change delivered order status?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
                 <field id="delivered_order_status" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
                     <label>Delivered Order Status</label>
                     <source_model>BitTools\SkyHub\Model\Config\Source\Integration\Order\Status\CompleteOrders</source_model>
                     <comment>When the order has the DELIVERED status type in Correios, Magento will put the order in this status.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="days_to_expire" translate="label comment" type="text" sortOrder="50" showInDefault="1"
+                       showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Days to expire</label>
+                    <comment>Quantity of days to expire the shipping track. Ex.: after X days, the tracker service won't track the shipping anymore.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
             </group>
         </section>

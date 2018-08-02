@@ -17,6 +17,7 @@ namespace JulioReis\CorreiosFollowup\Model\Tracking;
 use JulioReis\CorreiosFollowup\Model\ResourceModel\Tracking\Queue\CollectionFactory as QueueCollectionFactory;
 use JulioReis\CorreiosFollowup\Model\ResourceModel\Tracking\QueueFactory as QueueResourceFactory;
 use JulioReis\CorreiosFollowup\Model\Tracking\Queue as Queue;
+use JulioReis\CorreiosFollowup\Model\Context as ModuleContext;
 
 class QueueRepository
 {
@@ -30,18 +31,33 @@ class QueueRepository
     /** @var QueueResourceFactory */
     protected $queueResourceFactory;
 
+    /** @var ModuleContext */
+    protected $context;
 
+    /**
+     * QueueRepository constructor.
+     * @param QueueFactory $queueFactory
+     * @param QueueCollectionFactory $queueCollectionFactory
+     * @param QueueResourceFactory $queueResourceFactory
+     * @param ModuleContext $context
+     */
     public function __construct(
         QueueFactory $queueFactory,
         QueueCollectionFactory $queueCollectionFactory,
-        QueueResourceFactory $queueResourceFactory
+        QueueResourceFactory $queueResourceFactory,
+        ModuleContext $context
     )
     {
         $this->queueFactory = $queueFactory;
         $this->queueCollectionFactory = $queueCollectionFactory;
         $this->queueResourceFactory = $queueResourceFactory;
+        $this->context = $context;
     }
 
+    /**
+     * @param $shipmentTrackId string
+     * @return \JulioReis\CorreiosFollowup\Model\Tracking\Queue
+     */
     public function loadByShipmentTrackId($shipmentTrackId)
     {
         $queue = $this->queueFactory->create();
@@ -81,7 +97,11 @@ class QueueRepository
         return $this->queueCollectionFactory->create();
     }
 
-    public function getPendingTracks() {
+    /**
+     * @return \JulioReis\CorreiosFollowup\Model\ResourceModel\Tracking\Queue\Collection
+     */
+    public function getPendingTracks()
+    {
         $collection = $this->getCollection();
         $collection->addFieldToFilter('correios_status',
             [
@@ -90,6 +110,17 @@ class QueueRepository
                 ]
             ]
         );
+
+        if ($daysQtyToExpire = $this->context->moduleConfig()->getModuleConfig('days_to_expire')) {
+            if (is_numeric($daysQtyToExpire)) {
+                $date = date('Y-m-d', strtotime("-{$daysQtyToExpire} day"));
+                $collection->addFieldToFilter('created_at',
+                    [
+                        'gt' => $date
+                    ]
+                );
+            }
+        }
         return $collection;
     }
 
