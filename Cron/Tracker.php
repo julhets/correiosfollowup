@@ -15,19 +15,44 @@
 
 namespace JulioReis\CorreiosFollowup\Cron;
 
-use Braintree\Exception;
 use JulioReis\CorreiosFollowup\Model\Context as ModuleContext;
 use Magento\Cron\Model\Schedule;
 
 class Tracker
 {
+    /**
+     * @var ModuleContext
+     */
     protected $context;
+    /**
+     * @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueFactory
+     */
     protected $queueFactory;
+    /**
+     * @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueRepository
+     */
     protected $queueRepository;
+    /**
+     * @var \Magento\Sales\Model\Order\Shipment\TrackRepository
+     */
     protected $trackRepository;
+    /**
+     * @var \JulioReis\CorreiosFollowup\Helper\Tracking\Queue
+     */
     protected $trackingQueueHelper;
+    /**
+     * @var \Magento\Sales\Api\OrderRepositoryInterface
+     */
     protected $orderRepository;
+    /**
+     * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender
+     */
     protected $shipmentRepository;
+
+    /**
+     * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender
+     */
+    protected $shipmentCommentSender;
 
     /**
      * Tracker constructor.
@@ -42,7 +67,8 @@ class Tracker
         \Magento\Sales\Model\Order\Shipment\TrackRepository $trackRepository,
         \JulioReis\CorreiosFollowup\Helper\Tracking\Queue $trackingQueueHelper,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        \Magento\Sales\Model\Order\ShipmentRepository $shipmentRepository
+        \Magento\Sales\Model\Order\ShipmentRepository $shipmentRepository,
+        \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender $shipmentCommentSender
     )
     {
         $this->context = $context;
@@ -52,6 +78,7 @@ class Tracker
         $this->trackingQueueHelper = $trackingQueueHelper;
         $this->orderRepository = $orderRepository;
         $this->shipmentRepository = $shipmentRepository;
+        $this->shipmentCommentSender = $shipmentCommentSender;
     }
 
     /**
@@ -59,7 +86,7 @@ class Tracker
      */
     public function execute(Schedule $schedule)
     {
-        if(!$this->context->moduleConfig()->getModuleConfig('enabled')) {
+        if (!$this->context->moduleConfig()->getModuleConfig('enabled')) {
             return;
         }
 
@@ -88,7 +115,23 @@ class Tracker
                 foreach ($statusesToUpdate as $statusToUpdate) {
                     /** 5. put the new status on delivery comment */
                     $shipment = $this->shipmentRepository->get($shipmentTrack->getParentId());
-                    $shipment->addComment("Novo Status Correios: {$statusToUpdate[1]}", $auxCount == 0 ? true : false, true);
+
+                    $notifyCustomer = false;
+                    if ($auxCount == 0) {
+                        if ($this->context->moduleConfig()->getModuleConfig('notify_mail')) {
+                            $notifyCustomer = true;
+                        }
+                    }
+                    $shipment->addComment("Novo Status Correios: {$statusToUpdate[1]}", $notifyCustomer, true);
+                    /** 6. notify customer if active */
+                    if ($notifyCustomer) {
+                        try {
+                            $this->shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
+                        } catch (\Magento\Framework\Exception\MailException $ex) {
+                            $this->context->logger()->error($ex->getMessage());
+                        }
+                    }
+                    /** end */
                     $auxCount++;
                 }
                 $this->shipmentRepository->save($shipment);
@@ -105,7 +148,7 @@ class Tracker
                 if ($lastCorreiosStatusFlag == \JulioReis\CorreiosFollowup\Model\Tracking\Queue::CORREIOS_STATUS_DELIVERED) {
                     $this->processDeliveredOrderState($shipmentTrack->getOrderId());
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 $this->context->logger()->error($ex->getMessage());
             }
         }

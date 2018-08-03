@@ -9,6 +9,7 @@
                 <change_status>0</change_status>
                 <delivered_order_status>customer_delivered</delivered_order_status>
                 <days_to_expire>30</days_to_expire>
+                <notify_mail>1</notify_mail>
             </general>
         </julioreis_correiosfollowup>
     </default>
