@@ -22,7 +22,6 @@ use Magento\Framework\DB\Ddl\Table;
 
 class InstallSchema implements InstallSchemaInterface
 {
-
     use SetupHelper;
 
     /**
@@ -49,7 +48,7 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @throws \Zend_Db_Exception
      */
-    protected function installTrackingQueueTable()
+    private function installTrackingQueueTable()
     {
         $tableName = $this->getTable('julioreis_correiosfollowup_tracking_queue');
 

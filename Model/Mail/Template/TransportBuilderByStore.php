@@ -23,10 +23,10 @@ class TransportBuilderByStore extends \Magento\Framework\Mail\Template\Transport
     protected $message;
 
     /** @var SenderResolverInterface */
-    private $senderResolver;
+    protected $senderResolver;
 
     /** @var MessageInterfaceFactory|\Magento\Framework\Mail\MessageInterfaceFactory */
-    private $messageInterfaceFactory;
+    protected $messageInterfaceFactory;
 
     /**
      * TransportBuilderByStore constructor.
@@ -38,22 +38,29 @@ class TransportBuilderByStore extends \Magento\Framework\Mail\Template\Transport
         MessageInterface $message,
         \Magento\Framework\Mail\Template\SenderResolverInterface $senderResolver,
         \Magento\Framework\Mail\MessageInterfaceFactory $messageInterfaceFactory
-    )
-    {
+    ) {
         $this->message = $message;
         $this->senderResolver = $senderResolver;
         $this->messageInterfaceFactory = $messageInterfaceFactory;
     }
 
+    /**
+     * @param array|string $from
+     * @param int|string $store
+     * @return $this
+     */
     public function setFromByStore($from, $store)
     {
         $result = $this->senderResolver->resolve($from, $store);
         $this->message->setFrom($result['email'], $result['name']);
-        $this->reset();
+        $this->resetMessage();
         return $this;
     }
 
-    protected function reset()
+    /**
+     * @return $this
+     */
+    private function resetMessage()
     {
         $this->message = $this->messageInterfaceFactory->create();
         return $this;

@@ -21,18 +21,17 @@ use JulioReis\CorreiosFollowup\Model\Context as ModuleContext;
 
 class QueueRepository
 {
-
     /** @var QueueFactory */
-    protected $queueFactory;
+    private $queueFactory;
 
     /** @var QueueCollectionFactory */
-    protected $queueCollectionFactory;
+    private $queueCollectionFactory;
 
     /** @var QueueResourceFactory */
-    protected $queueResourceFactory;
+    private $queueResourceFactory;
 
     /** @var ModuleContext */
-    protected $context;
+    private $context;
 
     /**
      * QueueRepository constructor.
@@ -46,8 +45,7 @@ class QueueRepository
         QueueCollectionFactory $queueCollectionFactory,
         QueueResourceFactory $queueResourceFactory,
         ModuleContext $context
-    )
-    {
+    ) {
         $this->queueFactory = $queueFactory;
         $this->queueCollectionFactory = $queueCollectionFactory;
         $this->queueResourceFactory = $queueResourceFactory;
@@ -103,7 +101,8 @@ class QueueRepository
     public function getPendingTracks()
     {
         $collection = $this->getCollection();
-        $collection->addFieldToFilter('correios_status',
+        $collection->addFieldToFilter(
+            'correios_status',
             [
                 'in' => [
                     \JulioReis\CorreiosFollowup\Model\Tracking\Queue::CORREIOS_STATUS_PROCESSING
@@ -114,7 +113,8 @@ class QueueRepository
         if ($daysQtyToExpire = $this->context->moduleConfig()->getModuleConfig('days_to_expire')) {
             if (is_numeric($daysQtyToExpire)) {
                 $date = date('Y-m-d', strtotime("-{$daysQtyToExpire} day"));
-                $collection->addFieldToFilter('created_at',
+                $collection->addFieldToFilter(
+                    'created_at',
                     [
                         'gt' => $date
                     ]
@@ -127,7 +127,7 @@ class QueueRepository
     /**
      * @return \JulioReis\CorreiosFollowup\Model\ResourceModel\Tracking\Queue
      */
-    protected function getResource()
+    public function getResource()
     {
         return $this->queueResourceFactory->create();
     }

@@ -16,6 +16,10 @@ namespace JulioReis\CorreiosFollowup\Helper\Tracking;
 
 class Queue
 {
+    /**
+     * @param $statusMsg string
+     * @return string
+     */
     public function getCorreiosStatus($statusMsg)
     {
         if (strpos($statusMsg, 'Objeto entregue ao destinat') !== false) {

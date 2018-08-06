@@ -1,5 +1,4 @@
 <?php
-
 /**
  * JulioReis_CorreiosFollowup
  *
@@ -24,16 +23,16 @@ class Config
 {
 
     /** @var ScopeConfigInterface */
-    protected $scopeConfig;
+    private $scopeConfig;
 
     /** @var EncryptorInterface */
-    protected $encryptor;
+    private $encryptor;
 
     /** @var StoreManager */
-    protected $storeManager;
+    private $storeManager;
 
     /** @var string */
-    protected $group = 'general';
+    private $configGroup = 'general';
 
     /**
      * Service constructor.
@@ -46,8 +45,7 @@ class Config
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
         StoreManager $storeManager
-    )
-    {
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->storeManager = $storeManager;
@@ -55,20 +53,20 @@ class Config
 
     /**
      * @param string $field
-     * @param string $group
+     * @param string $configGroup
      * @param string $section
      * @param int|null $scopeCode
      * @param string $scopeType
      *
      * @return mixed
      */
-    public function getStoreConfig($field, $group, $section, $scopeCode = null, $scopeType = null)
+    public function getStoreConfig($field, $configGroup, $section, $scopeCode = null, $scopeType = null)
     {
         if (!$scopeType) {
             $scopeType = ScopeInterface::SCOPE_STORES;
         }
 
-        $path = implode('/', [$section, $group, $field]);
+        $path = implode('/', [$section, $configGroup, $field]);
 
         try {
             $scopeCode = $this->storeManager->getStore($scopeCode)->getId();
@@ -82,18 +80,18 @@ class Config
 
     /**
      * @param string $field
-     * @param string $group
+     * @param string $configGroup
      * @param null|int $scopeCode
      * @param string $scopeType
      *
      * @return mixed
      */
-    public function getModuleConfig($field, $group = null, $scopeCode = null, $scopeType = null)
+    public function getModuleConfig($field, $configGroup = null, $scopeCode = null, $scopeType = null)
     {
-        if (empty($group)) {
-            $group = $this->group;
+        if (!$configGroup) {
+            $configGroup = $this->configGroup;
         }
 
-        return $this->getStoreConfig($field, $group, 'julioreis_correiosfollowup', $scopeCode, $scopeType);
+        return $this->getStoreConfig($field, $configGroup, 'julioreis_correiosfollowup', $scopeCode, $scopeType);
     }
 }

@@ -18,15 +18,9 @@ use Monolog\Logger;
 
 class Handler extends \Magento\Framework\Logger\Handler\Base
 {
-    /**
-     * Logging level
-     * @var int
-     */
+    /** @var int */
     protected $loggerType = Logger::INFO;
 
-    /**
-     * File name
-     * @var string
-     */
+    /** @var string */
     protected $fileName = '/var/log/julioreis_correiosfollowup.log';
 }

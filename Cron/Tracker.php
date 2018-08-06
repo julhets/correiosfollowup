@@ -23,36 +23,36 @@ class Tracker
     /**
      * @var ModuleContext
      */
-    protected $context;
+    private $context;
     /**
      * @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueFactory
      */
-    protected $queueFactory;
+    private $queueFactory;
     /**
      * @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueRepository
      */
-    protected $queueRepository;
+    private $queueRepository;
     /**
      * @var \Magento\Sales\Model\Order\Shipment\TrackRepository
      */
-    protected $trackRepository;
+    private $trackRepository;
     /**
      * @var \JulioReis\CorreiosFollowup\Helper\Tracking\Queue
      */
-    protected $trackingQueueHelper;
+    private $trackingQueueHelper;
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    protected $orderRepository;
+    private $orderRepository;
     /**
      * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender
      */
-    protected $shipmentRepository;
+    private $shipmentRepository;
 
     /**
      * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSenderFactory
      */
-    protected $shipmentCommentSenderFactory;
+    private $shipmentCommentSenderFactory;
 
     /**
      * Tracker constructor.
@@ -74,8 +74,7 @@ class Tracker
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Sales\Model\Order\ShipmentRepository $shipmentRepository,
         \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSenderFactory $shipmentCommentSenderFactory
-    )
-    {
+    ) {
         $this->context = $context;
         $this->queueFactory = $queueFactory;
         $this->queueRepository = $queueRepository;
@@ -158,7 +157,10 @@ class Tracker
         }
     }
 
-    protected function processDeliveredOrderState($orderId)
+    /**
+     * @param $orderId
+     */
+    private function processDeliveredOrderState($orderId)
     {
         if (!$this->context->moduleConfig()->getModuleConfig('change_status')) {
             return;

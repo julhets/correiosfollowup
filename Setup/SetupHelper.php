@@ -20,7 +20,6 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 trait SetupHelper
 {
-    
     use Setup;
     
     
@@ -33,7 +32,7 @@ trait SetupHelper
      * @return $this
      * @throws \Zend_Db_Exception
      */
-    protected function addTableIndex(
+    private function addTableIndex(
         Table $table,
         $field,
         $type = AdapterInterface::INDEX_TYPE_INDEX
@@ -60,7 +59,7 @@ trait SetupHelper
      * @return $this
      * @throws \Zend_Db_Exception
      */
-    protected function addTableForeignKey(
+    private function addTableForeignKey(
         Table $table,
         $column,
         $referenceTable,

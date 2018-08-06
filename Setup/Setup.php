@@ -18,13 +18,13 @@ trait Setup
 {
     
     /** @var \Magento\Framework\Setup\ModuleDataSetupInterface|\Magento\Framework\Setup\SchemaSetupInterface */
-    protected $setup;
+    private $setup;
     
     
     /**
      * @return \Magento\Framework\DB\Adapter\AdapterInterface
      */
-    protected function getConnection()
+    private function getConnection()
     {
         return $this->setup()->getConnection();
     }
@@ -33,7 +33,7 @@ trait Setup
     /**
      * @return \Magento\Framework\Setup\ModuleDataSetupInterface|\Magento\Framework\Setup\SchemaSetupInterface
      */
-    protected function setup()
+    private function setup()
     {
         return $this->setup;
     }
@@ -44,7 +44,7 @@ trait Setup
      *
      * @return string
      */
-    protected function getTable($tableName)
+    private function getTable($tableName)
     {
         return $this->setup()->getTable($tableName);
     }

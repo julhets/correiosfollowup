@@ -7,9 +7,12 @@ use JulioReis\CorreiosFollowup\Model\Context as ModuleContext;
 
 class DeleteShipmentFromQueue implements \Magento\Framework\Event\ObserverInterface
 {
-    protected $context;
-    protected $queueFactory;
-    protected $queueRepository;
+    /** @var ModuleContext */
+    private $context;
+    /** @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueFactory */
+    private $queueFactory;
+    /** @var \JulioReis\CorreiosFollowup\Model\Tracking\QueueRepository */
+    private $queueRepository;
 
     /**
      * AddShipmentToQueue constructor.
@@ -21,8 +24,7 @@ class DeleteShipmentFromQueue implements \Magento\Framework\Event\ObserverInterf
         ModuleContext $context,
         \JulioReis\CorreiosFollowup\Model\Tracking\QueueFactory $queueFactory,
         \JulioReis\CorreiosFollowup\Model\Tracking\QueueRepository $queueRepository
-    )
-    {
+    ) {
         $this->context = $context;
         $this->queueRepository = $queueRepository;
         $this->queueFactory = $queueFactory;

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * JulioReis_CorreiosFollowup
  *
@@ -12,9 +11,9 @@
  *
  * @author    Julio Reis <julioreis.si@gmail.com>
  */
+
 namespace JulioReis\CorreiosFollowup\Model\Logger;
 
 class Logger extends \Monolog\Logger
 {
-
 }

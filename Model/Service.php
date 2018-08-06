@@ -14,10 +14,23 @@
 
 namespace JulioReis\CorreiosFollowup\Model;
 
-use Magento\Framework\Model\AbstractModel;
-
-class Service extends AbstractModel
+class Service
 {
+    private $domDocumentFactory;
+    private $domXPathFactory;
+
+    public function __construct(
+        \DOMDocumentFactory $domDocumentFactory,
+        \DomXPathFactory $domXPathFactory
+    ) {
+        $this->domDocumentFactory = $domDocumentFactory;
+        $this->domXPathFactory = $domXPathFactory;
+    }
+
+    /**
+     * @param $codigoRastreio
+     * @return array
+     */
     public function getTrackingStatuses($codigoRastreio)
     {
         $url = 'http://www2.correios.com.br/sistemas/rastreamento/ctrl/ctrlRastreamento.cfm?';
@@ -33,7 +46,7 @@ class Service extends AbstractModel
         $content = curl_exec($ch);
         curl_close($ch);
 
-        $dom = new \DOMDocument;
+        $dom = $this->domDocumentFactory->create();
         @$dom->loadHTML($content);
 
         $listDates = $this->getElementsByClassName($dom, 'sroDtEvent');
@@ -53,12 +66,25 @@ class Service extends AbstractModel
         return $trackingLines;
     }
 
+    /**
+     * @param $dom
+     * @param $className
+     * @return \DOMNodeList
+     */
     private function getElementsByClassName($dom, $className)
     {
-        $finder = new \DomXPath($dom);
+        $finder = $this->domXPathFactory->create(
+            [
+                'doc' => $dom
+            ]
+        );
         return $finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $className ')]");
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
     private function formatString($str)
     {
         return ltrim(rtrim(str_replace("\r", '', $str)));
