@@ -131,8 +131,14 @@ class Tracker
                     /** 6. notify customer if active */
                     if ($notifyCustomer) {
                         try {
-                            $shipmentCommentSender = $this->shipmentCommentSenderFactory->create();
-                            $shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
+                            $this->context->eventManager()
+                                ->dispatch('julioreis_correiosfollowup_shipment_comment_added_after', [
+                                    'shipment' => $shipment,
+                                    'message' => $statusToUpdate[1],
+                                ]);
+
+//                            $shipmentCommentSender = $this->shipmentCommentSenderFactory->create();
+//                            $shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
                         } catch (\Exception $ex) {
                             $this->context->logger()->error($ex->getMessage());
                         }
