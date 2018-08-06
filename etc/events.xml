@@ -12,9 +12,4 @@
                   instance="JulioReis\CorreiosFollowup\Observer\Tracking\Queue\DeleteShipmentFromQueue"/>
     </event>
 
-    <event name="julioreis_correiosfollowup_shipment_comment_added_after">
-        <observer name="julioreis_correiosfollowup_notify_customer_packing_movement"
-                  instance="JulioReis\CorreiosFollowup\Observer\Tracker"/>
-    </event>
-
 </config>
