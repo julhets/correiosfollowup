@@ -118,25 +118,23 @@ class Tracker
 
                 $auxCount = 0;
                 foreach ($statusesToUpdate as $statusToUpdate) {
-                    /** 5. put the new status on delivery comment */
+                    /** 5. put the new status on delivery comment and notify customer by email */
                     $shipment = $this->shipmentRepository->get($shipmentTrack->getParentId());
 
                     $notifyCustomer = false;
                     if ($auxCount == 0) {
                         if ($this->context->moduleConfig()->getModuleConfig('notify_mail')) {
                             $notifyCustomer = true;
+                            try {
+                                $shipmentCommentSender = $this->shipmentCommentSenderFactory->create();
+                                $shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
+                            } catch (\Exception $ex) {
+                                $notifyCustomer = false;
+                                $this->context->logger()->error($ex->getMessage());
+                            }
                         }
                     }
                     $shipment->addComment("Novo Status Correios: {$statusToUpdate[1]}", $notifyCustomer, true);
-                    /** 6. notify customer if active */
-                    if ($notifyCustomer) {
-                        try {
-                            $shipmentCommentSender = $this->shipmentCommentSenderFactory->create();
-                            $shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
-                        } catch (\Exception $ex) {
-                            $this->context->logger()->error($ex->getMessage());
-                        }
-                    }
                     /** end */
                     $auxCount++;
                 }
