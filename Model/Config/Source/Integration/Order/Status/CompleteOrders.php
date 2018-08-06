@@ -21,5 +21,5 @@ class CompleteOrders extends Status
 {
 
     /** @var string */
-    private $_stateStatuses = Order::STATE_COMPLETE;
+    protected $_stateStatuses = Order::STATE_COMPLETE;
 }
