@@ -50,15 +50,20 @@ class Tracker
     protected $shipmentRepository;
 
     /**
-     * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender
+     * @var \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSenderFactory
      */
-    protected $shipmentCommentSender;
+    protected $shipmentCommentSenderFactory;
 
     /**
      * Tracker constructor.
      * @param ModuleContext $context
      * @param \JulioReis\CorreiosFollowup\Model\Tracking\QueueFactory $queueFactory
      * @param \JulioReis\CorreiosFollowup\Model\Tracking\QueueRepository $queueRepository
+     * @param \Magento\Sales\Model\Order\Shipment\TrackRepository $trackRepository
+     * @param \JulioReis\CorreiosFollowup\Helper\Tracking\Queue $trackingQueueHelper
+     * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
+     * @param \Magento\Sales\Model\Order\ShipmentRepository $shipmentRepository
+     * @param \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSenderFactory $shipmentCommentSenderFactory
      */
     public function __construct(
         ModuleContext $context,
@@ -68,7 +73,7 @@ class Tracker
         \JulioReis\CorreiosFollowup\Helper\Tracking\Queue $trackingQueueHelper,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Sales\Model\Order\ShipmentRepository $shipmentRepository,
-        \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender $shipmentCommentSender
+        \Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSenderFactory $shipmentCommentSenderFactory
     )
     {
         $this->context = $context;
@@ -78,7 +83,7 @@ class Tracker
         $this->trackingQueueHelper = $trackingQueueHelper;
         $this->orderRepository = $orderRepository;
         $this->shipmentRepository = $shipmentRepository;
-        $this->shipmentCommentSender = $shipmentCommentSender;
+        $this->shipmentCommentSenderFactory = $shipmentCommentSenderFactory;
     }
 
     /**
@@ -126,8 +131,9 @@ class Tracker
                     /** 6. notify customer if active */
                     if ($notifyCustomer) {
                         try {
-                            $this->shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
-                        } catch (\Magento\Framework\Exception\MailException $ex) {
+                            $shipmentCommentSender = $this->shipmentCommentSenderFactory->create();
+                            $shipmentCommentSender->send($shipment, $notifyCustomer, $statusToUpdate[1]);
+                        } catch (\Exception $ex) {
                             $this->context->logger()->error($ex->getMessage());
                         }
                     }
