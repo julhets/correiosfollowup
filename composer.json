@@ -1,14 +1,15 @@
 {
   "name": "julioreis/correios-followup",
-  "description": "",
   "type": "magento2-module",
   "version": "1.0.0",
-  "license": [
-    "OSL-3.0",
-    "AFL-3.0"
+  "authors": [
+    {
+      "name": "Julio Reis",
+      "email": "julioreis.si@gmail.com"
+    }
   ],
-  "require": {
-    "php": "~7.0.0"
+  "support": {
+    "email": "julioreis.si@gmail.com"
   },
   "autoload": {
     "files": [
@@ -17,5 +18,6 @@
     "psr-4": {
       "JulioReis\\CorreiosFollowup\\": ""
     }
-  }
+  },
+  "minimum-stability": "stable"
 }
