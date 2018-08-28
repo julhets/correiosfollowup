@@ -33,7 +33,7 @@ class Service
      */
     public function getTrackingStatuses($codigoRastreio)
     {
-        $url = 'http://www2.correios.com.br/sistemas/rastreamento/ctrl/ctrlRastreamento.cfm?';
+        $url = 'https://www2.correios.com.br/sistemas/rastreamento/ctrl/ctrlRastreamento.cfm?';
         $post = ("acao=&objetos={$codigoRastreio}");
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, 1);
