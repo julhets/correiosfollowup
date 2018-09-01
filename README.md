@@ -7,6 +7,10 @@ Correios Followup for Magento 2 is a free tool that allow you to keep your custo
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2018-08-01
+### Changed
+- Changing the Correios service Url.
+
 ## [1.0.0] - 2018-08-08
 ### Added
 - Tracking of courier tracking codes directly from Correios;
